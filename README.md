@@ -5,3 +5,7 @@ Authors:
 
     Trevor Le 
     Mwangi Payton
+
+
+How to run: 
+
