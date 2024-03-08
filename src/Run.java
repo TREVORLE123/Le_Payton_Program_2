@@ -4,15 +4,13 @@ import java.util.*;
 /**
  * This class represents the main entry point for running the game.
  */
-public class RunGame {
+public class Run {
 
     // Planner instance for planning the game actions
-    private Planner plan = new Planner();
-
     /**
      * Starts the game by prompting the user for initial configurations and initiating the planning process.
      */
-    public void startGame(){
+    public void start(){
         Scanner userInput = new Scanner(System.in);
 
         String monkeyLocation;
@@ -62,10 +60,15 @@ public class RunGame {
         }
 
         // Set initial state of the game
-        plan.initalState(monkeyLocation, boxLocation, bananaLocation);
+        Planner planObj = new Planner(monkeyLocation, boxLocation, bananaLocation);
         
         // Find and execute the plan to solve the game
-        plan.findPlan();
+        List<String> plan = planObj.findPlan();
+
+        System.out.println("Plan: ");
+        for(String action : plan){
+            System.out.println(action);
+        }
     }
 
     /**
