@@ -1,7 +1,6 @@
 package src;
 
 public class Grab implements Operator{
-    private String operatorName = "GRAB";
 
     /*
      * Pre: Monkey and bananas must be in the same room, and the monkey must be HIGH

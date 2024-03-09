@@ -2,6 +2,7 @@ package src;
 import java.util.ArrayList;
 import java.util.List;
 
+//Node creator for planner states
 public class PlannerNode {
     private WorldState state;
     private List<Operator> plan;

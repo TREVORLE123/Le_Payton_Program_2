@@ -73,7 +73,6 @@ public class WorldState {
     public boolean isMonkeyHasBananas(){
         return this.monkeyHasBananas;
     }
-
     public void setState(String monkey, String box, String banana) {
         this.roomMonkeyIn = monkey;
         this.roomBoxIn = box;

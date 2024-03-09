@@ -3,11 +3,15 @@ package src;
 import java.util.*;
 
 public class Planner {
+    //initialize current state, goal state, and storage lists for states and planner
     private WorldState initialState;
     private WorldState goalState;
     private PriorityQueue<PlannerNode> openList;
     private HashSet<WorldState> closedList;
 
+
+    // Constructor: Initializes the Planner with specified initial locations for the monkey, box, and bananas.
+    // Sets up the initial and goal states, as well as the priority queue (open list) and the set of explored states (closed list).
     public Planner(String monkeyLocation, String boxLocation, String bananaLocation){
         initialState = new WorldState(monkeyLocation, boxLocation, bananaLocation, WorldState.HEIGHT_LOW, false);
         goalState = new WorldState(bananaLocation, bananaLocation, bananaLocation, WorldState.HEIGHT_HIGH, true);
@@ -18,6 +22,8 @@ public class Planner {
         closedList = new HashSet<>();
     }
 
+     // Heuristic function: Calculates a heuristic score for a given WorldState based on its closeness to the goal state.
+    // The score increases for states further away from the goal, guiding the search towards the goal.
     private int heuristic(WorldState state) {
         // Heuristic: Prioritize states closer to achieving the goal conditions
         int score = 0;
@@ -27,13 +33,16 @@ public class Planner {
         return score;
     }
 
+    // Finds a plan to reach the goal state from the initial state using a heuristic-guided search.
+    // Returns a list of operators that represents the actions to be taken to reach the goal state.
+    // Returns an empty list if no plan is found.
     public List<Operator> findPlan() {
     openList.add(new PlannerNode(initialState, new ArrayList<>()));
 
     while (!openList.isEmpty()) {
         PlannerNode currentNode = openList.poll();
 
-        if (currentNode.getState().equals(goalState)) {
+        if (currentNode.getState().isMonkeyHasBananas()){
             return currentNode.getPlan();
         }
 
@@ -52,39 +61,48 @@ public class Planner {
     return Collections.emptyList();
 }
 
-
+    // Generates all possible successor states from a given node by applying all applicable operators.
+    // Returns a list of PlannerNodes, each representing a possible state reachable from the current state along with the action that leads to it.
     private List<PlannerNode> generateSuccessors(PlannerNode currentNode) {
         List<PlannerNode> successors = new ArrayList<>();
         // Initialize the list of operators 
-    List<Operator> operators = new ArrayList<>();
+        List<Operator> operators = new ArrayList<>();
+        List<String> options = Arrays.asList("A", "B", "C");
+        List<Push> possiblePushes = new ArrayList<>();
 
-    // Add relevant move operators based on the current state of the monkey and the box
-    if (currentNode.getState().isMonkeyAt(WorldState.ROOM_A) && currentNode.getState().isBoxAt(WorldState.ROOM_A)) {
-        operators.add(new Move(WorldState.ROOM_A, WorldState.ROOM_B));
-    }
-    if (currentNode.getState().isMonkeyAt(WorldState.ROOM_B) && currentNode.getState().isBoxAt(WorldState.ROOM_B)) {
-        operators.add(new Move(WorldState.ROOM_B, WorldState.ROOM_A));
-        operators.add(new Move(WorldState.ROOM_B, WorldState.ROOM_C));
-    }
-    if (currentNode.getState().isMonkeyAt(WorldState.ROOM_C) && currentNode.getState().isBoxAt(WorldState.ROOM_C)) {
-        operators.add(new Move(WorldState.ROOM_C, WorldState.ROOM_B));
-    }   
+        String monkey_room = currentNode.getState().getRoomMonkeyIn();
+        String monkey_height = currentNode.getState().getMonkeyHeight();
+        String banana_room = currentNode.getState().getRoomBananasIn();
+        String box_room = currentNode.getState().getRoomBoxIn();
+        //Checks if monkey is in the same room as box else move rooms
+        if(!monkey_room.equals(box_room)){
+            for (String option : options) {
+                if (!option.equals(monkey_room)) {
+                    operators.add(new Move(monkey_room, option));
+                }
+            }
+        } 
+        //if first check is true then we must check if monkey is in the same room as banana
+        //and box else move box 
+        else if(!box_room.equals(banana_room) && monkey_room.equals(box_room)){
+            for (String option : options) {
+                if (!option.equals(box_room)) {
+                    possiblePushes.add(new Push(monkey_room, option));
+                }
+            }
+        }
+        //climbs up if monkey is not high
+        else if(!monkey_height.equals("HIGH") && box_room.equals(banana_room) && monkey_room.equals(box_room)){
+            operators.add(new ClimbUp());
+        }
+        //grabss if monkey does not have bananas and is high
+        else if(monkey_height.equals("HIGH") && box_room.equals(banana_room) && monkey_room.equals(box_room)){
+            operators.add(new Grab());
+        }
+       
 
-    // Add relevant push operators based on the current state of the monkey and the box
-    List<Push> possiblePushes = new ArrayList<>();
-    if (currentNode.getState().isMonkeyAt(WorldState.ROOM_A) && currentNode.getState().isMonkeyHeight(WorldState.HEIGHT_LOW) && currentNode.getState().isBoxAt(WorldState.ROOM_A)) {
-        possiblePushes.add(new Push(WorldState.ROOM_A, WorldState.ROOM_B));
-    }
-    if (currentNode.getState().isMonkeyAt(WorldState.ROOM_B) && currentNode.getState().isMonkeyHeight(WorldState.HEIGHT_LOW) && currentNode.getState().isBoxAt(WorldState.ROOM_B)) {
-        possiblePushes.add(new Push(WorldState.ROOM_B, WorldState.ROOM_A));
-        possiblePushes.add(new Push(WorldState.ROOM_B, WorldState.ROOM_C));
-    }
-    if (currentNode.getState().isMonkeyAt(WorldState.ROOM_C) && currentNode.getState().isMonkeyHeight(WorldState.HEIGHT_LOW) && currentNode.getState().isBoxAt(WorldState.ROOM_C)) {
-        possiblePushes.add(new Push(WorldState.ROOM_C, WorldState.ROOM_B));
-    }
-
-// Add all relevant push operators to the list of operators
-    operators.addAll(possiblePushes);
+    // Add all relevant push operators to the list of operators
+        operators.addAll(possiblePushes);
 
         for (Operator operator : operators) {
             if (operator.checkPreconditions(currentNode.getState())) {

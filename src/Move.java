@@ -45,7 +45,6 @@ public class Move implements Operator{
                                                    worldState.getRoomBananasIn(), worldState.getMonkeyHeight(), 
                                                    worldState.isMonkeyHasBananas());
          newWorldState.setRoomMonkeyIn(moveTo);
-         newWorldState.setRoomBoxIn(moveTo);
          return newWorldState;
     }
 
