@@ -24,12 +24,13 @@ public class Planner {
     }
 
     public List<Operator> findPlan(){
-        ArrayList <Operator> nextPlan = new ArrayList<Operator>();
-        ArrayList <Operator> previousPlan = new ArrayList<Operator>();
+        ArrayList <Operator> open = new ArrayList<Operator>();
+        ArrayList <Operator> closed = new ArrayList<Operator>();
+
+        open.add(new PlannerNode(initialState, null));
 
         
         return plan;
     }
-
 
 }
