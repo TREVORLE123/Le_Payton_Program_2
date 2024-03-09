@@ -1,3 +1,4 @@
+package src;
 public class ClimbUp implements Operator {
     /*
      * Pre: Monkey and box are in the same room, and the monkey is at height LOW

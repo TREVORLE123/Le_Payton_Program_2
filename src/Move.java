@@ -1,4 +1,5 @@
 package src;
+
 public class Move implements Operator{
     private String operatorName = "MOVE";
     private String moveFrom;
@@ -43,8 +44,8 @@ public class Move implements Operator{
          WorldState newWorldState = new WorldState(worldState.getRoomMonkeyIn(), worldState.getRoomBoxIn(), 
                                                    worldState.getRoomBananasIn(), worldState.getMonkeyHeight(), 
                                                    worldState.isMonkeyHasBananas());
-         newWorldState.setRoomMonkeyIn(to);
-         newWorldState.setRoomBoxIn(to);
+         newWorldState.setRoomMonkeyIn(moveTo);
+         newWorldState.setRoomBoxIn(moveTo);
          return newWorldState;
     }
 

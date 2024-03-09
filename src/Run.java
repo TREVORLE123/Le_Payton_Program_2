@@ -63,10 +63,10 @@ public class Run {
         Planner planObj = new Planner(monkeyLocation, boxLocation, bananaLocation);
         
         // Find and execute the plan to solve the game
-        List<String> plan = planObj.findPlan();
+        List<Operator> plan = planObj.findPlan();
 
         System.out.println("Plan: ");
-        for(String action : plan){
+        for(Operator action : plan){
             System.out.println(action);
         }
     }

@@ -1,3 +1,5 @@
+package src;
+
 public class WorldState {
     private String roomMonkeyIn;
     private String roomBoxIn;
